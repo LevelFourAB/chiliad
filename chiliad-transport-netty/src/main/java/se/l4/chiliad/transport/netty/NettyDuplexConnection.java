@@ -4,6 +4,7 @@ import org.reactivestreams.Publisher;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import io.rsocket.frame.FrameLengthCodec;
 import io.rsocket.internal.BaseDuplexConnection;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -17,6 +18,8 @@ public class NettyDuplexConnection
 	public NettyDuplexConnection(Connection connection)
 	{
 		this.connection = connection;
+
+		connection.channel().closeFuture().addListener(f -> this.doOnClose());
 	}
 
 	@Override
@@ -37,26 +40,32 @@ public class NettyDuplexConnection
 	@Override
 	public Flux<ByteBuf> receive()
 	{
-		return connection.inbound().receiveObject()
-			.filter(p -> p instanceof ByteBuf)
-			.cast(ByteBuf.class);
+		return connection.inbound().receive()
+			.map(frame -> FrameLengthCodec.frame(frame).retain());
 	}
 
 	@Override
 	public Mono<Void> send(Publisher<ByteBuf> frames)
 	{
-		return connection.outbound().sendObject(frames).then();
+		if(frames instanceof Mono)
+		{
+			return connection.outbound()
+				.sendObject(
+					((Mono<ByteBuf>) frames)
+						.map(this::encode)
+				)
+				.then();
+		}
+
+		return connection.outbound()
+			.sendObject(
+				Flux.from(frames)
+					.map(this::encode)
+			).then();
 	}
 
 	private ByteBuf encode(ByteBuf frame)
 	{
-		return frame;
-		//return FrameLengthCodec.encode(alloc(), frame.readableBytes(), frame);
-	}
-
-	private ByteBuf decode(ByteBuf frame)
-	{
-		return frame;
-		//return FrameLengthCodec.frame(frame).retain();
+		return FrameLengthCodec.encode(alloc(), frame.readableBytes(), frame);
 	}
 }

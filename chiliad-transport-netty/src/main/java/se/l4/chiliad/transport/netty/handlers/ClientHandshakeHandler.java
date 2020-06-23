@@ -1,9 +1,9 @@
 package se.l4.chiliad.transport.netty.handlers;
 
 import io.netty.buffer.ByteBufAllocator;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.ChannelPipeline;
 import se.l4.chiliad.engine.transport.TransportContext;
 import se.l4.chiliad.engine.transport.handshake.Begin;
 import se.l4.chiliad.engine.transport.handshake.ClientHandshaker;
@@ -13,10 +13,17 @@ public class ClientHandshakeHandler
 	extends ChannelInboundHandlerAdapter
 {
 	private final ClientHandshaker handshaker;
+	private final Runnable onConnected;
 
-	public ClientHandshakeHandler(TransportContext context, ByteBufAllocator allocator)
+	public ClientHandshakeHandler(
+		TransportContext context,
+		ByteBufAllocator allocator,
+		Runnable onConnected
+	)
 	{
 		handshaker = new ClientHandshaker(context, allocator);
+
+		this.onConnected = onConnected;
 	}
 
 	@Override
@@ -25,17 +32,36 @@ public class ClientHandshakeHandler
 	{
 		handshaker.receive((HandshakeMessage) msg)
 			.subscribe(nextMsg -> {
-				ctx.channel().writeAndFlush(nextMsg);
+				ChannelFuture future = ctx.channel().writeAndFlush(nextMsg);
 
 				if(nextMsg instanceof Begin)
 				{
-					ChannelPipeline pipeline = ctx.pipeline();
-					pipeline.remove(ClientHandshakeHandler.class);
-					pipeline.remove(HandshakeCodec.class);
+					future.addListener(f -> {
+						if(f.isSuccess())
+						{
+							ctx.pipeline().remove(ClientHandshakeHandler.class);
+							ConnectionHelper.rewire(ctx);
+
+							onConnected.run();
+						}
+						else
+						{
+							ctx.channel().close();
+						}
+					});
 				}
+
+				ctx.read();
 			}, err -> {
 				// TODO: What do we do on errors?
 				ctx.channel().close();
 			});
-}
+	}
+
+	@Override
+	public void channelReadComplete(ChannelHandlerContext ctx)
+		throws Exception
+	{
+		ctx.read();
+	}
 }

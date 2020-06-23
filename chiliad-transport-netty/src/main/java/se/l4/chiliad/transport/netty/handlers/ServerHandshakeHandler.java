@@ -3,7 +3,6 @@ package se.l4.chiliad.transport.netty.handlers;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.ChannelPipeline;
 import se.l4.chiliad.engine.transport.TransportContext;
 import se.l4.chiliad.engine.transport.handshake.Begin;
 import se.l4.chiliad.engine.transport.handshake.HandshakeMessage;
@@ -13,18 +12,18 @@ public class ServerHandshakeHandler
 	extends ChannelInboundHandlerAdapter
 {
 	private final ServerHandshaker handshaker;
-	private final Runnable connectionReceiver;
+	private final Runnable onConnected;
 
 	public ServerHandshakeHandler(
 		TransportContext context,
-		Runnable connectionReceiver
+		Runnable onConnected
 	)
 	{
-		this.connectionReceiver = connectionReceiver;
+		this.onConnected = onConnected;
 		handshaker = new ServerHandshaker(context);
 	}
 
-	public void handleInitial(Channel channel)
+	public void sendInitial(Channel channel)
 	{
 		handshaker.getInitial()
 			.subscribe(msg -> channel.writeAndFlush(msg));
@@ -34,29 +33,31 @@ public class ServerHandshakeHandler
 	public void channelRead(ChannelHandlerContext ctx, Object msg)
 		throws Exception
 	{
-		System.out.println("server " + msg);
 		if(msg instanceof Begin)
 		{
-			// Handshake is complete, need to rewire the pipeline
-			ChannelPipeline pipeline = ctx.pipeline();
-			pipeline.remove(ServerHandshakeHandler.class);
-			pipeline.remove(HandshakeCodec.class);
+			ctx.pipeline().remove(ServerHandshakeHandler.class);
+			ConnectionHelper.rewire(ctx);
 
-			// TODO: What do we put here?
-			System.out.println("Server connected");
-
-			connectionReceiver.run();
-			//acceptor.apply(duplexConnection)
+			onConnected.run();
+			ctx.read();
 		}
 		else
 		{
 			handshaker.receive((HandshakeMessage) msg)
 				.subscribe(nextMsg -> {
 					ctx.channel().writeAndFlush(nextMsg);
+					ctx.read();
 				}, err -> {
 					// TODO: What do we do on errors?
 					ctx.channel().close();
 				});
 		}
+	}
+
+	@Override
+	public void channelReadComplete(ChannelHandlerContext ctx)
+		throws Exception
+	{
+		ctx.read();
 	}
 }

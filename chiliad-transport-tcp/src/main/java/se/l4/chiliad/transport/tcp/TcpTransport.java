@@ -33,6 +33,7 @@ public class TcpTransport
 			.doOnBind(b -> logger.info("Starting server at port " + port))
 			.doOnConnection(onConnection)
 			.port(port)
+			//.wiretap("server", LogLevel.INFO)
 			.bind();
 	}
 
@@ -43,6 +44,7 @@ public class TcpTransport
 			.doOnConnected(consumer)
 			.host(uri.getHost())
 			.port(uri.getPort())
+			//.wiretap("client", LogLevel.INFO)
 			.connect();
 	}
 }

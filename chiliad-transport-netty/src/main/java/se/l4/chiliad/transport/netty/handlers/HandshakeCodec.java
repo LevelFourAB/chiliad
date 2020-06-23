@@ -194,6 +194,8 @@ public class HandshakeCodec
 			ByteBuf data = ((Auth) msg).getData();
 			out.writeInt(data.readableBytes());
 			out.writeBytes(data);
+
+			data.release();
 		}
 		else if(msg instanceof AuthData)
 		{
@@ -202,6 +204,8 @@ public class HandshakeCodec
 			ByteBuf data = ((AuthData) msg).getData();
 			out.writeInt(data.readableBytes());
 			out.writeBytes(data);
+
+			data.release();
 		}
 	}
 
