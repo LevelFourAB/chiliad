@@ -2,9 +2,9 @@ package se.l4.chiliad.transport.tcp;
 
 import java.net.URI;
 import java.time.Duration;
-import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.eclipse.collections.api.factory.Lists;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +41,7 @@ public class TcpTransportTest
 	public void testClientConnect()
 	{
 		DefaultTransportContext context = new DefaultTransportContext(
-			Collections.singletonList(new AnonymousAuth())
+			Lists.immutable.of(new AnonymousAuth())
 		);
 
 		TcpTransport transport = new TcpTransport(45120);
@@ -54,7 +54,7 @@ public class TcpTransportTest
 	private Tuple2<DuplexConnection, DuplexConnection> createConnection()
 	{
 		DefaultTransportContext context = new DefaultTransportContext(
-			Collections.singletonList(new AnonymousAuth())
+			Lists.immutable.of(new AnonymousAuth())
 		);
 
 		int port = ThreadLocalRandom.current().nextInt(11000, 14000);

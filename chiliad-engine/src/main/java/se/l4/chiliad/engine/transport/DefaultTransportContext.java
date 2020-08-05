@@ -1,24 +1,25 @@
 package se.l4.chiliad.engine.transport;
 
-import java.util.List;
 import java.util.Optional;
+
+import org.eclipse.collections.api.list.ImmutableList;
 
 import se.l4.chiliad.engine.auth.AuthMethod;
 
 public class DefaultTransportContext
 	implements TransportContext
 {
-	private final List<AuthMethod> authMethods;
+	private final ImmutableList<AuthMethod> authMethods;
 
 	public DefaultTransportContext(
-		List<AuthMethod> authMethods
+		ImmutableList<AuthMethod> authMethods
 	)
 	{
 		this.authMethods = authMethods;
 	}
 
 	@Override
-	public List<AuthMethod> getAuthMethods()
+	public ImmutableList<AuthMethod> getAuthMethods()
 	{
 		return authMethods;
 	}

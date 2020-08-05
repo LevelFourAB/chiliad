@@ -3,9 +3,9 @@ package se.l4.chiliad.transport.tcp;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.time.Duration;
-import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.eclipse.collections.api.factory.Lists;
 import org.junit.jupiter.api.Test;
 
 import io.rsocket.test.TransportTest;
@@ -28,7 +28,7 @@ public class RSocketTransportTest
 	private TransportContext context()
 	{
 		return new DefaultTransportContext(
-			Collections.singletonList(new AnonymousAuth())
+			Lists.immutable.of(new AnonymousAuth())
 		);
 	}
 

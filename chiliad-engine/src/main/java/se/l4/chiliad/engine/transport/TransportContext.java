@@ -1,7 +1,8 @@
 package se.l4.chiliad.engine.transport;
 
-import java.util.List;
 import java.util.Optional;
+
+import org.eclipse.collections.api.list.ImmutableList;
 
 import se.l4.chiliad.engine.auth.AuthMethod;
 
@@ -13,7 +14,7 @@ public interface TransportContext
 	 * @return
 	 *   all of the authentication methods that are available
 	 */
-	List<AuthMethod> getAuthMethods();
+	ImmutableList<AuthMethod> getAuthMethods();
 
 	/**
 	 * Get the specified authentication method.
