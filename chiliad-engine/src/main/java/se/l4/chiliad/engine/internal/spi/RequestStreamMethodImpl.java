@@ -2,6 +2,7 @@ package se.l4.chiliad.engine.internal.spi;
 
 import java.util.Objects;
 
+import se.l4.chiliad.engine.internal.protocol.Names;
 import se.l4.chiliad.engine.spi.RequestStreamMethod;
 import se.l4.exobytes.Serializer;
 
@@ -48,7 +49,7 @@ public class RequestStreamMethodImpl
 
 	public static Builder create(String name)
 	{
-		Objects.requireNonNull(name, "name must be set");
+		Names.requireValidMethodName(name);
 
 		return new Builder()
 		{

@@ -10,6 +10,7 @@ import org.eclipse.collections.api.map.ImmutableMap;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import se.l4.chiliad.engine.internal.protocol.Names;
 import se.l4.chiliad.engine.spi.InvokableService;
 import se.l4.chiliad.engine.spi.InvokableServiceMethod;
 import se.l4.chiliad.engine.spi.RequestResponseMethod;
@@ -72,6 +73,8 @@ public class ServiceContractImpl
 
 	public static Builder create(String name)
 	{
+		Names.requireValidServiceName(name);
+
 		return new BuilderImpl(name, Lists.immutable.empty());
 	}
 
