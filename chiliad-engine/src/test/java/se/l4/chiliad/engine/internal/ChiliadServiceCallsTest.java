@@ -64,7 +64,6 @@ public class ChiliadServiceCallsTest
 			)
 			.build();
 
-
 		c1.addService(contract.implement()
 			.requestResponse("echo", args -> Mono.just((String) args[0]))
 			.build()
@@ -79,8 +78,7 @@ public class ChiliadServiceCallsTest
 			.filter(ServiceEvent.isAvailable("chiliad:test"))
 			.blockFirst(Duration.ofSeconds(1));
 
-		InvokableService service = c2.getService(contract)
-			.build();
+		InvokableService service = c2.getRemoteService(contract);
 
 		Object o = service.getMethod("echo")
 			.cast(InvokableRequestResponseMethod.class)
@@ -116,8 +114,7 @@ public class ChiliadServiceCallsTest
 			.filter(ServiceEvent.isAvailable("chiliad:test"))
 			.blockFirst(Duration.ofSeconds(1));
 
-		InvokableService service = c2.getService(contract)
-			.build();
+		InvokableService service = c2.getRemoteService(contract);
 
 		Object o = service.getMethod("echo")
 			.cast(InvokableRequestResponseMethod.class)

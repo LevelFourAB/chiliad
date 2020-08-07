@@ -21,6 +21,9 @@ import se.l4.chiliad.engine.spi.RequestStreamMethod;
 import se.l4.chiliad.engine.spi.ServiceContract;
 import se.l4.chiliad.engine.spi.ServiceMethod;
 
+/**
+ * Manager that keeps track of remote services.
+ */
 public class RemoteServicesManager
 {
 	private static final Object[] EMPTY_ARGS = new Object[0];
@@ -43,7 +46,6 @@ public class RemoteServicesManager
 		remoteServiceChanges = ReplayProcessor.create(0);
 		remoteServiceChangesSink = remoteServiceChanges.sink();
 	}
-
 
 	public Flux<ServiceEvent> events()
 	{
@@ -71,7 +73,7 @@ public class RemoteServicesManager
 
 		// Request a stream of service events
 		RemoteInvokers.requestStream(CoreService.NAME, CoreService.SERVICES_METHOD, () -> socket)
-			.apply(EMPTY_ARGS)
+			.invoke(EMPTY_ARGS)
 			.subscribe(o -> {
 				RemoteServiceEvent event = (RemoteServiceEvent) o;
 				switch(event.getType())
@@ -166,5 +168,11 @@ public class RemoteServicesManager
 		}
 
 		return builder.build();
+	}
+
+	public RSocketSupplier createRandomSupplier(String name)
+	{
+		RemoteService service = remoteServices.getIfAbsentPut(name, RemoteService::new);
+		return service::pickRandom;
 	}
 }

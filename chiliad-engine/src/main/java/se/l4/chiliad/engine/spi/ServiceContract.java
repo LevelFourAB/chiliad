@@ -1,7 +1,5 @@
 package se.l4.chiliad.engine.spi;
 
-import java.util.function.Function;
-
 import org.eclipse.collections.api.list.ListIterable;
 
 import reactor.core.publisher.Flux;
@@ -93,18 +91,7 @@ public interface ServiceContract
 		 * @param invoker
 		 *   the function to call when invoking
 		 */
-		ImplementationBuilder requestResponse(String name, Function<Object[], Mono<? extends Object>> invoker);
-
-		/**
-		 * Add an implementation for a {@link RequestResponseMethod} of the
-		 * given name.
-		 *
-		 * @param name
-		 *   the name of the method
-		 * @param invokerBuilder
-		 *   function that will be called to build the invoker
-		 */
-		ImplementationBuilder requestResponseFactory(String name, Function<RequestResponseMethod, Function<Object[], Mono<? extends Object>>> invokerBuilder);
+		ImplementationBuilder requestResponse(String name, MethodInvoker<Mono<? extends Object>> invoker);
 
 		/**
 		 * Add an implementation for a {@link RequestStreamMethod} of the given
@@ -116,19 +103,7 @@ public interface ServiceContract
 		 *   the function to call when invoking
 		 * @return
 		 */
-		ImplementationBuilder requestStream(String name, Function<Object[], Flux<? extends Object>> invoker);
-
-		/**
-		 * Add an implementation for a {@link RequestStreamMethod} of the given
-		 * name.
-		 *
-		 * @param name
-		 *   the name of the method
-		 * @param invokerBuilder
-		 *   function that will be called to build the invoker
-		 * @return
-		 */
-		ImplementationBuilder requestStreamFactory(String name, Function<RequestStreamMethod, Function<Object[], Flux<? extends Object>>> invokerBuilder);
+		ImplementationBuilder requestStream(String name, MethodInvoker<Flux<? extends Object>> invoker);
 
 		/**
 		 * Build the invokable service.

@@ -1,7 +1,5 @@
 package se.l4.chiliad.engine.spi;
 
-import java.util.function.Function;
-
 import reactor.core.publisher.Mono;
 import se.l4.chiliad.engine.internal.spi.InvokableRequestResponseMethodImpl;
 import se.l4.chiliad.engine.internal.spi.RequestResponseMethodImpl;
@@ -36,7 +34,7 @@ public interface RequestResponseMethod
 	 * @param invoker
 	 * @return
 	 */
-	default InvokableRequestResponseMethod toInvokable(Function<Object[], Mono<? extends Object>> invoker)
+	default InvokableRequestResponseMethod toInvokable(MethodInvoker<Mono<? extends Object>> invoker)
 	{
 		return new InvokableRequestResponseMethodImpl(this, invoker);
 	}

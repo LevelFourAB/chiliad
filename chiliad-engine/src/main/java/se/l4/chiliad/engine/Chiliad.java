@@ -40,7 +40,7 @@ public interface Chiliad
 	 * @param service
 	 * @return
 	 */
-	<S extends Service> ServiceBuilder<S> getService(Class<S> service);
+	<S extends Service> ServiceBuilder<S> createRemoteService(Class<S> service);
 
 	/**
 	 * Retrieve a service via name.
@@ -48,7 +48,7 @@ public interface Chiliad
 	 * @param name
 	 * @return
 	 */
-	ServiceBuilder<InvokableService> getService(ServiceContract contract);
+	InvokableService getRemoteService(ServiceContract contract);
 
 	/**
 	 * Listen to changes to services.

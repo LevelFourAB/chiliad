@@ -1,7 +1,5 @@
 package se.l4.chiliad.engine.spi;
 
-import java.util.function.Function;
-
 import reactor.core.publisher.Flux;
 import se.l4.chiliad.engine.internal.spi.InvokableRequestStreamMethodImpl;
 import se.l4.chiliad.engine.internal.spi.RequestStreamMethodImpl;
@@ -36,7 +34,7 @@ public interface RequestStreamMethod
 	 * @param invoker
 	 * @return
 	 */
-	default InvokableRequestStreamMethod toInvokable(Function<Object[], Flux<? extends Object>> invoker)
+	default InvokableRequestStreamMethod toInvokable(MethodInvoker<Flux<? extends Object>> invoker)
 	{
 		return new InvokableRequestStreamMethodImpl(this, invoker);
 	}

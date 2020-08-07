@@ -1,8 +1,5 @@
 package se.l4.chiliad.engine.internal.remote;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import io.netty.buffer.ByteBuf;
 import io.rsocket.RSocket;
 import io.rsocket.util.ByteBufPayload;
@@ -10,6 +7,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.l4.chiliad.engine.internal.protocol.InvocationPayloadDecoding;
 import se.l4.chiliad.engine.internal.protocol.InvocationPayloadEncoding;
+import se.l4.chiliad.engine.spi.MethodInvoker;
 import se.l4.chiliad.engine.spi.RequestResponseMethod;
 import se.l4.chiliad.engine.spi.RequestStreamMethod;
 import se.l4.exobytes.Serializer;
@@ -24,10 +22,10 @@ public class RemoteInvokers
 	{
 	}
 
-	public static Function<Object[], Mono<? extends Object>> requestResponse(
+	public static MethodInvoker<Mono<? extends Object>> requestResponse(
 		String service,
 		RequestResponseMethod method,
-		Supplier<RSocket> socket
+		RSocketSupplier socket
 	)
 	{
 		String name = method.getName();
@@ -56,10 +54,10 @@ public class RemoteInvokers
 		});
 	}
 
-	public static Function<Object[], Flux<? extends Object>> requestStream(
+	public static MethodInvoker<Flux<? extends Object>> requestStream(
 		String service,
 		RequestStreamMethod method,
-		Supplier<RSocket> socket
+		RSocketSupplier socket
 	)
 	{
 		String name = method.getName();

@@ -1,7 +1,5 @@
 package se.l4.chiliad.engine.internal.spi;
 
-import java.util.function.Function;
-
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.Maps;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -13,6 +11,7 @@ import reactor.core.publisher.Mono;
 import se.l4.chiliad.engine.internal.protocol.Names;
 import se.l4.chiliad.engine.spi.InvokableService;
 import se.l4.chiliad.engine.spi.InvokableServiceMethod;
+import se.l4.chiliad.engine.spi.MethodInvoker;
 import se.l4.chiliad.engine.spi.RequestResponseMethod;
 import se.l4.chiliad.engine.spi.RequestStreamMethod;
 import se.l4.chiliad.engine.spi.ServiceContract;
@@ -149,16 +148,7 @@ public class ServiceContractImpl
 		}
 
 		@Override
-		public ImplementationBuilder requestResponse(String name, Function<Object[], Mono<? extends Object>> invoker)
-		{
-			return requestResponseFactory(name, method -> invoker);
-		}
-
-		@Override
-		public ImplementationBuilder requestResponseFactory(
-			String name,
-			Function<RequestResponseMethod, Function<Object[], Mono<? extends Object>>> invokerBuilder
-		)
+		public ImplementationBuilder requestResponse(String name, MethodInvoker<Mono<? extends Object>> invoker)
 		{
 			ServiceMethod method = findLocalMethod(name);
 			if(! (method instanceof RequestResponseMethod))
@@ -168,21 +158,12 @@ public class ServiceContractImpl
 
 			RequestResponseMethod typedMethod = (RequestResponseMethod) method;
 			return addMethod(
-				typedMethod.toInvokable(invokerBuilder.apply(typedMethod))
+				typedMethod.toInvokable(invoker)
 			);
 		}
 
 		@Override
-		public ImplementationBuilder requestStream(String name, Function<Object[], Flux<? extends Object>> invoker)
-		{
-			return requestStreamFactory(name, method -> invoker);
-		}
-
-		@Override
-		public ImplementationBuilder requestStreamFactory(
-			String name,
-			Function<RequestStreamMethod, Function<Object[], Flux<? extends Object>>> invokerBuilder
-		)
+		public ImplementationBuilder requestStream(String name, MethodInvoker<Flux<? extends Object>> invoker)
 		{
 			ServiceMethod method = findLocalMethod(name);
 			if(! (method instanceof RequestStreamMethod))
@@ -192,7 +173,7 @@ public class ServiceContractImpl
 
 			RequestStreamMethod typedMethod = (RequestStreamMethod) method;
 			return addMethod(
-				typedMethod.toInvokable(invokerBuilder.apply(typedMethod))
+				typedMethod.toInvokable(invoker)
 			);
 		}
 

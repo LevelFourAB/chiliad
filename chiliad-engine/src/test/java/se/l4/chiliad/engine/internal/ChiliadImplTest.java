@@ -37,7 +37,7 @@ public class ChiliadImplTest
 	}
 
 	@Test
-	public void testRegister()
+	public void testRegisterPreBuilt()
 	{
 		ServiceContract contract = ServiceContract.create("chiliad:test")
 			.addMethod(

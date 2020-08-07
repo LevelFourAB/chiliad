@@ -1,23 +1,27 @@
 package se.l4.chiliad.engine;
 
-import java.util.function.Function;
+import reactor.core.publisher.Mono;
 
-import se.l4.chiliad.engine.spi.InvokableService;
-
+/**
+ * Builder used when setting up access to remote services from an instance of
+ * {@link Chiliad}.
+ *
+ * @param <T>
+ */
 public interface ServiceBuilder<T>
 {
 	/**
-	 * Set the factory that will be used to create the service.
+	 * Get a mono that will return this instance, but only once it is available
+	 * from at least one peer.
 	 *
-	 * @param factory
 	 * @return
 	 */
-	ServiceBuilder<T> withFactory(Function<InvokableService, T> factory);
+	Mono<T> whenAvailable();
 
 	/**
 	 * Build the instance.
 	 *
 	 * @return
 	 */
-	T build();
+	Mono<T> build();
 }

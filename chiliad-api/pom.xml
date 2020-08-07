@@ -12,5 +12,15 @@
 	<name>${project.artifactId}</name>
 
 	<dependencies>
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>se.l4.exobytes</groupId>
+			<artifactId>exobytes</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>
