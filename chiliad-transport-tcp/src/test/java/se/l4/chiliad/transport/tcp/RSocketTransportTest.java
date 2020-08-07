@@ -6,7 +6,6 @@ import java.time.Duration;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.eclipse.collections.api.factory.Lists;
-import org.junit.jupiter.api.Test;
 
 import io.rsocket.test.TransportTest;
 import se.l4.chiliad.engine.auth.AnonymousAuth;
@@ -21,8 +20,8 @@ public class RSocketTransportTest
 	private final TransportPair transportPair =
 		new TransportPair<>(
 			() -> InetSocketAddress.createUnresolved("localhost", ThreadLocalRandom.current().nextInt(11000, 14000)),
-			(address, server) -> new RSocketClientTransport(new TcpTransport(0), this::context, URI.create("chiliad+tcp://127.0.0.1:" + address.getPort())),
-			(address) -> new RSocketServerTransport(new TcpTransport(address.getPort()), this::context)
+			(address, server) -> new RSocketClientTransport(new TCPTransport(0), this::context, URI.create("chiliad+tcp://127.0.0.1:" + address.getPort())),
+			(address) -> new RSocketServerTransport(new TCPTransport(address.getPort()), this::context)
 		);
 
 	private TransportContext context()
@@ -42,33 +41,5 @@ public class RSocketTransportTest
 	public TransportPair getTransportPair()
 	{
 		return transportPair;
-	}
-
-	@Override
-	@Test
-	public void requestChannel1() {
-		// TODO Auto-generated method stub
-		TransportTest.super.requestChannel1();
-	}
-
-	@Override
-	@Test
-	public void requestChannel512()
-	{
-		TransportTest.super.requestChannel512();
-	}
-
-	@Override
-	@Test
-	public void requestChannel20_000() {
-		// TODO Auto-generated method stub
-		TransportTest.super.requestChannel20_000();
-	}
-
-	@Override
-	@Test
-	public void metadataPush10() {
-		// TODO Auto-generated method stub
-		TransportTest.super.metadataPush10();
 	}
 }

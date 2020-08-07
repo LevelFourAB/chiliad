@@ -24,7 +24,7 @@ import reactor.util.function.Tuples;
 import se.l4.chiliad.engine.auth.AnonymousAuth;
 import se.l4.chiliad.engine.transport.DefaultTransportContext;
 
-public class TcpTransportTest
+public class TCPTransportTest
 {
 	private Closeable server;
 
@@ -44,7 +44,7 @@ public class TcpTransportTest
 			Lists.immutable.of(new AnonymousAuth())
 		);
 
-		TcpTransport transport = new TcpTransport(45120);
+		TCPTransport transport = new TCPTransport(45120);
 		server = transport.serve(context, conn -> Mono.empty()).block(Duration.ofSeconds(5));
 
 		transport.connect(context, URI.create("chiliad+tcp://127.0.0.1:45120"))
@@ -58,7 +58,7 @@ public class TcpTransportTest
 		);
 
 		int port = ThreadLocalRandom.current().nextInt(11000, 14000);
-		TcpTransport transport = new TcpTransport(port);
+		TCPTransport transport = new TCPTransport(port);
 
 		MonoProcessor<DuplexConnection> connection = MonoProcessor.create();
 		server = transport.serve(context, conn -> {
